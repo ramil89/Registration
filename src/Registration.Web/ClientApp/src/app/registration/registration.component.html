@@ -1,0 +1,12 @@
+<div>
+  <p class="h1">Registration</p>
+  <div [hidden]="step != 'credentials'">
+    <p class="h3">Step 1</p>
+    <credentials-step (dataSubmitted)="onCredentialsProcessed($event)"></credentials-step>
+  </div>
+  <div [hidden]="step != 'location'">
+    <p class="h3">Step 2</p>
+    <location-step (dataSubmitted)="onLocationProcessed($event)"
+                  ></location-step>
+  </div>
+</div>

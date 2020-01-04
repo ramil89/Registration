@@ -1,0 +1,33 @@
+<form [formGroup]="registerForm" (ngSubmit)="processLocations()">
+  <div class="form-group">
+    <label for="Login">Country</label>
+
+    <select class="form-control" formControlName="countryId"
+            [ngClass]="{ 'is-invalid': submitted && f.countryId.errors }"
+            (change)="countryChanged($event)">
+      <option *ngFor="let country of countries; let i = index" [value]="countries[i].id">
+        {{countries[i].name}}
+      </option>
+    </select>
+    
+    <div *ngIf="submitted && f.countryId.errors" class="invalid-feedback">
+      <div *ngIf="f.countryId.errors.required">Country is Required</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="Password">Province</label>
+    <select class="form-control" formControlName="provinceId"
+            [ngClass]="{ 'is-invalid': submitted && f.provinceId.errors }">
+      <option *ngFor="let province of provinces; let i = index" [value]="provinces[i].id">
+        {{provinces[i].name}}
+      </option>
+    </select>
+
+    <div *ngIf="submitted && f.provinceId.errors" class="invalid-feedback">
+      <div *ngIf="f.provinceId.errors.required">Province is Required</div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Save</button>
+</form>
