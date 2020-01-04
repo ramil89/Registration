@@ -12,6 +12,10 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Registration.Web.Modules;
 using FluentValidation;
+using Hellang.Middleware.ProblemDetails;
+using Registration.Domain.SeedWork;
+using Microsoft.AspNetCore.Http;
+using Registration.Web.Exceptions;
 
 namespace Registration.Web
 {
@@ -38,6 +42,15 @@ namespace Registration.Web
 
             services.AddDbContext<CustomerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString(RegistrationDBConnectionString)));
             services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
+            services.AddProblemDetails(options =>
+            {
+                options.IncludeExceptionDetails = f => false;
+
+                options.Map<NotImplementedException>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status501NotImplemented));
+                options.Map<BusinessRuleValidationException>(ex => new BusinessRuleValidationExceptionProblemDetails(ex) { });
+                options.Map<ValidationException>(ex => new RequestValidationExceptionProblemDetails(ex));
+                options.Map<Exception>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status500InternalServerError));
+            });
 
             return CreateAutofacServiceProvider(services);
         }
@@ -55,6 +68,8 @@ namespace Registration.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseProblemDetails();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
