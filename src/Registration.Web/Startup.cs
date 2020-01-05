@@ -16,6 +16,8 @@ using Hellang.Middleware.ProblemDetails;
 using Registration.Domain.SeedWork;
 using Microsoft.AspNetCore.Http;
 using Registration.Web.Exceptions;
+using Registration.Web.Middlewares;
+using System.Linq;
 
 namespace Registration.Web
 {
@@ -56,11 +58,19 @@ namespace Registration.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                using (var dataContext = serviceProvider.GetService<CustomerContext>())
+                {
+                    if (dataContext.Database.GetPendingMigrations().Count() > 0)
+                    {
+                        dataContext.Database.Migrate();
+                    }
+                }
             }
             else
             {
@@ -70,6 +80,7 @@ namespace Registration.Web
             }
 
             app.UseProblemDetails();
+            app.UseMiddleware<ErrorLoggingMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -97,7 +108,7 @@ namespace Registration.Web
                 if (env.IsDevelopment())
                 {
                     spa.UseAngularCliServer(npmScript: "start");
-                    
+
                 }
             });
         }
@@ -113,8 +124,6 @@ namespace Registration.Web
             container.RegisterModule(new MediatorModule());
 
             var buildContainer = container.Build();
-
-            //ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(buildContainer));
 
             return new AutofacServiceProvider(buildContainer);
         }

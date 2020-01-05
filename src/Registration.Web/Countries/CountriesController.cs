@@ -20,6 +20,11 @@ namespace Registration.Web.Countries
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Gets countries by parentId. 
+        /// </summary>
+        /// <param name="parentId"></param>
+        /// <returns></returns>
         [Route("")]
         [Route("{parentId}")]
         [HttpGet]

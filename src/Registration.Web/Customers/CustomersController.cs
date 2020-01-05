@@ -21,7 +21,11 @@ namespace Registration.Web.Customers
             _mediator = mediator;
         }
 
-        //[Route("")]
+        /// <summary>
+        /// Customer registration
+        /// </summary>
+        /// <param name="command">Customer details</param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(CustomerDto), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> RegisterCustomer([FromBody]RegisterCustomerCommand command)

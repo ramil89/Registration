@@ -17,7 +17,7 @@ export class CredentialsComponent implements OnInit {
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.pattern(/[a-zA-Z]{1,}\d{1,}/), Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.pattern(/([a-zA-Z]+\d+|\d+[a-zA-Z]+)[0-9a-zA-Z]*/), Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
       acceptTerms: [false, Validators.requiredTrue]
     }, {
@@ -29,8 +29,6 @@ export class CredentialsComponent implements OnInit {
   get f() { return this.registerForm.controls; }
 
   processCredentials() {
-
-    console.log('is valid ', this.registerForm.valid)
 
     this.submitted = true;
 

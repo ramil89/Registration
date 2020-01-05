@@ -17,19 +17,5 @@ namespace Registration.Web.Customers.RegisterCustomer
         public int CountryId { get; set; }
 
         public int ProvinceId { get; set; }
-
-        //private RegisterCustomerCommand() { }
-
-        //public RegisterCustomerCommand(
-        //    string login,
-        //    string password, 
-        //    int countryId, 
-        //    int provinceId)
-        //{
-        //    Login = login;
-        //    Password = password;
-        //    CountryId = countryId;
-        //    ProvinceId = provinceId;
-        //}
     }
 }
