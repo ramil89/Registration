@@ -3,6 +3,7 @@ using Autofac.Core;
 using MediatR;
 using Newtonsoft.Json;
 using Registration.Domain.SeedWork;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,14 @@ namespace Registration.Infrastructure
     public class DomainEventsDispatcher : IDomainEventsDispatcher
     {
         private readonly IMediator _mediator;
-        private readonly ILifetimeScope _scope;
         private readonly CustomerContext _customerContext;
+        private readonly ILogger _logger;
 
-        public DomainEventsDispatcher(IMediator mediator, ILifetimeScope scope, CustomerContext customerContext)
+        public DomainEventsDispatcher(IMediator mediator, ILogger logger, CustomerContext customerContext)
         {
             this._mediator = mediator;
-            this._scope = scope;
             this._customerContext = customerContext;
+            this._logger = logger;
         }
 
         public async Task DispatchEventsAsync()
@@ -33,46 +34,18 @@ namespace Registration.Infrastructure
                 .SelectMany(x => x.Entity.DomainEvents)
                 .ToList();
 
-            var domainEventNotifications = new List<IDomainEventNotification<IDomainEvent>>();
-            foreach (var domainEvent in domainEvents)
-            {
-                Type domainEvenNotificationType = typeof(IDomainEventNotification<>);
-                var domainNotificationWithGenericType = domainEvenNotificationType.MakeGenericType(domainEvent.GetType());
-                var domainNotification = _scope.ResolveOptional(domainNotificationWithGenericType, new List<Parameter>
-                {
-                    new NamedParameter("domainEvent", domainEvent)
-                });
-
-                if (domainNotification != null)
-                {
-                    domainEventNotifications.Add(domainNotification as IDomainEventNotification<IDomainEvent>);
-                }
-            }
-
             domainEntities
                 .ForEach(entity => entity.Entity.ClearDomainEvents());
 
             var tasks = domainEvents
                 .Select(async (domainEvent) =>
                 {
+                    _logger.Information("Domain event {@data}", domainEvent);
+
                     await _mediator.Publish(domainEvent);
                 });
 
             await Task.WhenAll(tasks);
-
-            foreach (var domainEventNotification in domainEventNotifications)
-            {
-                string type = domainEventNotification.GetType().FullName;
-
-                Serilog.Log.Information("Event type {@type}, domain event {@data}", type, domainEventNotification);
-                    
-                //var data = JsonConvert.SerializeObject(domainEventNotification);
-                //OutboxMessage outboxMessage = new OutboxMessage(
-                //    domainEventNotification.DomainEvent.OccurredOn,
-                //    type,
-                //    data);
-                //this._ordersContext.OutboxMessages.Add(outboxMessage);
-            }
         }
     }
 }
