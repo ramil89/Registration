@@ -46,6 +46,8 @@
     <None Remove="ClientApp\src\app\services\base.api.service.ts" />
     <None Remove="ClientApp\src\app\services\customers.service.ts" />
     <None Remove="ClientApp\src\app\services\locations.service.ts" />
+    <None Remove="ClientApp\src\app\services\models\customer.model.ts" />
+    <None Remove="ClientApp\src\app\services\models\location-item.model.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +63,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\base.api.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\customers.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\locations.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\models\customer.model.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\models\location-item.model.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

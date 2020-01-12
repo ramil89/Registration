@@ -2,7 +2,8 @@ import { Component, OnInit, EventEmitter, Output, ViewChild, Inject } from '@ang
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CredentialsComponent, CredentialsData } from './credentials/credentials.component';
 import { LocationsData } from './location/location.component';
-import { Customer, CustomersApiService } from '../services/customers.service';
+import { Customer } from '../services/models/customer.model';
+import { CustomersApiService } from '../services/customers.service';
 
 @Component({
   selector: 'registration',
@@ -23,8 +24,6 @@ export class RegistrationComponent implements OnInit {
 
   onCredentialsProcessed($event: CredentialsData) {
     this.step = 'location';
-
-    console.log($event)
 
     this.customerInfo.Login = $event.Login;
     this.customerInfo.Password = $event.Password;

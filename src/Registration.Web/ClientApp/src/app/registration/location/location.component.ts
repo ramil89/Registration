@@ -2,7 +2,8 @@ import { Component, OnInit, EventEmitter, Output, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MustMatch } from '../../helpers/must-match.validator';
 import { HttpClient } from '@angular/common/http';
-import { LocationsApiService, LocationItem } from '../../services/locations.service';
+import { LocationsApiService } from '../../services/locations.service';
+import { LocationItem } from '../../services/models/location-item.model';
 
 @Component({
   selector: 'location-step',
@@ -21,8 +22,6 @@ export class LocationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('location init')
-
     this.registerForm = this.formBuilder.group({
       countryId: ['', [Validators.required]],
       provinceId: ['', [Validators.required]],
@@ -31,7 +30,6 @@ export class LocationComponent implements OnInit {
 
     this.locationsService.loadLocations().subscribe(result => {
       this.countries = result;
-      console.log(result);
     }, (error) => {
       console.log(error);
     });
@@ -42,7 +40,6 @@ export class LocationComponent implements OnInit {
 
     this.locationsService.loadLocations($event.target.value).subscribe(result => {
       this.provinces = result;
-      console.log(this.provinces);
     }, (error) => {
       console.log(error);
     });
@@ -50,12 +47,11 @@ export class LocationComponent implements OnInit {
 
   processLocations() {
     this.submitted = true;
-    console.log(this.registerForm.invalid)
 
     if (this.registerForm.invalid) {
       return;
     }
-
+    
     this.dataSubmitted.emit(
       new LocationsData(
         this.f.countryId.value,
